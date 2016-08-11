@@ -8,7 +8,7 @@ module RedmineTags
       module InstanceMethods
         def issue_tags
           @name = params[:q].to_s
-          @tags = Issue.available_tags project: @project, name_like: @name
+          @tags = Issue.available_tags projects: Project.visible.pluck(:id), name_like: @name
           render layout: false, partial: 'tag_list'
         end
 

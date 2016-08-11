@@ -33,6 +33,10 @@ module RedmineTags
             project = Project.find(project) unless project.is_a? Project
             where("#{project.project_condition(Setting.display_subprojects_issues?)}")
           }
+
+          scope :on_projects, lambda { |project_ids|
+            where(project_id: project_ids)
+          }
         end
       end
 
@@ -46,6 +50,7 @@ module RedmineTags
         def available_tags(options = {})
           issues_scope = Issue.visible.select('issues.id').joins(:project)
           issues_scope = issues_scope.on_project(options[:project]) if options[:project]
+          issues_scope = issues_scope.on_projects(options[:projects]) if options[:projects]
           issues_scope = issues_scope.joins(:status).open if options[:open_only]
 
           result_scope = ActsAsTaggableOn::Tag
