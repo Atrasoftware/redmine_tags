@@ -64,9 +64,9 @@ module RedmineTags
 
             case connection.adapter_name
             when 'PostgreSQL'
-              result_scope = result_scope.where('tags.name ILIKE ?', matcher)
+              result_scope = result_scope.where('LOWER(tags.name) ILIKE ?', matcher)
             else
-              result_scope = result_scope.where('tags.name LIKE ?', matcher)
+              result_scope = result_scope.where('LOWER(tags.name) LIKE ?', matcher)
             end
 
           end
