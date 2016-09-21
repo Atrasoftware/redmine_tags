@@ -61,9 +61,9 @@ module RedmineTags
           if options[:name_like]
             conditions[0] << case self.connection.adapter_name
                                when 'PostgreSQL'
-                                 "AND tags.name ILIKE ?"
+                                 "AND LOWER(tags.name) ILIKE ?"
                                else
-                                 "AND tags.name LIKE ?"
+                                 "AND LOWER(tags.name) LIKE ?"
                              end
             conditions << "%#{options[:name_like].downcase}%"
           end
