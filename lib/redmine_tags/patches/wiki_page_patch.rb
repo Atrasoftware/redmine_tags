@@ -20,6 +20,7 @@ module RedmineTags
               project = project.id if project.is_a? Project
               where "#{ Project.table_name }.id = ?", project
             }
+
           scope :on_projects, lambda { |projects|
             if projects.is_a? Array
               projects = projects.map(&:id) if projects.first.is_a? Project
@@ -29,6 +30,7 @@ module RedmineTags
             end
             where "#{ Project.table_name }.id IN (?)", projects
           }
+
           WikiPage.safe_attributes 'tag_list'
         end
       end
@@ -44,7 +46,6 @@ module RedmineTags
           if options[:projects] or options[:project]
             ids_scope = ids_scope.on_projects(options[:projects] || options[:project])
           end
-
           conditions = ['']
 
           sql_query = ids_scope.to_sql
@@ -61,9 +62,9 @@ module RedmineTags
           if options[:name_like]
             conditions[0] << case self.connection.adapter_name
                                when 'PostgreSQL'
-                                 "AND LOWER(tags.name) ILIKE ?"
+                                 "AND tags.name ILIKE ?"
                                else
-                                 "AND LOWER(tags.name) LIKE ?"
+                                 "AND tags.name LIKE ?"
                              end
             conditions << "%#{options[:name_like].downcase}%"
           end
