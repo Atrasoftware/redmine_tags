@@ -15,13 +15,23 @@ module RedmineTags
       module InstanceMethods
         include TagsHelper
 
-        def column_content_with_redmine_tags(column, issue)
-          if column.name.eql? :tags
-            column.value(issue).collect{ |t| render_tag_link(t) }
-              .join(RedmineTags.settings[:issues_use_colors].to_i > 0 ? ' ' : ', ')
+        def column_content_with_redmine_tags(column, container)
+          if container.is_a? Project
+            if column.name.eql? :tags
+              tags_cloud = container.tags
+              "<span class='tag_list'>#{tags_cloud.map{|tag| favorite_project_tag_link(tag.name)}.join(' ').html_safe}</span>"
+            else
+              column_content_without_redmine_tags(column, container)
+            end
           else
-            column_content_without_redmine_tags(column, issue)
+            issue = container
+            if column.name.eql? :tags
+              column.value(issue).collect{ |t| render_tag_link(t) }.join(RedmineTags.settings[:issues_use_colors].to_i > 0 ? ' ' : ', ')
+            else
+              column_content_without_redmine_tags(column, issue)
+            end
           end
+
         end
 
         def csv_content_with_redmine_tags(column, issue)
